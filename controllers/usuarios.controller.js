@@ -5,10 +5,20 @@ const Usuario = require('../models/usuario.model');
 const { generarJWT } = require('../helpers/jwt');
 
 const getUsuarios = async (req, res) => {
-    const usuarios = await Usuario.find({}, 'nombre email role google');
+
+    const desde = Number(req.query.desde) || 0;
+
+    const [usuarios, total] = await Promise.all([Usuario.find({}, 'nombre email role google')
+                                                        .skip(desde)
+                                                        .limit(10),
+
+                                                        Usuario.countDocuments()
+    ]);
+
     res.status(200).json({
         ok: true,
         usuarios: usuarios,
+        total,
         uid: req.uid
     })
 }
@@ -89,14 +99,14 @@ const updateUsuario = async (req, res = response) => {
     }
 }
 
-const deleteUsuario = async(req, res) => {
+const deleteUsuario = async (req, res) => {
     const uuid = req.params.id;
 
     try {
 
         const existeUsuario = await Usuario.findOne({ _id: uuid });
 
-        if(!existeUsuario) {
+        if (!existeUsuario) {
             return res.status(404).json({
                 ok: false,
                 msg: 'No existe un usuario por ese id'
@@ -111,14 +121,14 @@ const deleteUsuario = async(req, res) => {
             msg: 'Usuario eliminado con exito.'
         })
 
-    } catch(error) {
+    } catch (error) {
         console.log(error);
         res.status(500).json({
             ok: false,
             msg: 'Hable con el administrador'
         })
     }
-} 
+}
 
 module.exports = {
     getUsuarios,

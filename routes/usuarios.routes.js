@@ -11,7 +11,7 @@ const { validatJWT } = require('../middlewares/validar-jwt');
 const router = Router();
 
 // Rutas
-router.get('/', validatJWT ,getUsuarios);
+router.get('/', validatJWT , getUsuarios);
 
 router.post('/', [
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
