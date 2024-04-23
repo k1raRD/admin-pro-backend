@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const Usuario = require('../models/usuario.model');
 const { generarJWT } = require('../helpers/jwt');
 const { googleVerify } = require('../helpers/google-verify');
+const { getMenuFrontend } = require('../helpers/menu-frontend');
 
 const login = async (req = request, res = response) => {
 
@@ -25,13 +26,13 @@ const login = async (req = request, res = response) => {
         if (!validPassword) {
             return res.status(400).json({
                 ok: false,
-                msg: "Email o password incorrectos."
+                msg: "Email o password incorrectos.",
             })
         }
 
         const token = await generarJWT(usuarioDB.id);
 
-        res.json({ ok: true, token })
+        res.json({ ok: true, token, menu: getMenuFrontend(usuarioDB.role) })
     } catch (error) {
         console.log(errro);
         res.status(500).json({
@@ -71,7 +72,8 @@ const googleSignIn = async (req = request, res = response) => {
 
         res.json({
             ok: true,
-            token
+            token,
+            menu: getMenuFrontend(usuario.role)
         })
 
     } catch (error) {
@@ -93,7 +95,8 @@ const renewToken = async (req = request, res = response) => {
         ok: true,
         uid,
         token,
-        usuario
+        usuario,
+        menu: getMenuFrontend(usuario.role)
     });
 }
 
