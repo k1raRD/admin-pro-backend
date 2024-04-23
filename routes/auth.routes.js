@@ -28,10 +28,9 @@ googleSignIn
 
 router.get('/renew',
 [
-    validatJWT,
-    renewToken
+    validatJWT
 ],
-googleSignIn
+renewToken
 )
 
 module.exports = router;
