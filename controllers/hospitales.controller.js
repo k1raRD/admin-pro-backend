@@ -8,7 +8,7 @@ const getHospitales = async (req = request, res = response) => {
 
     res.json({
         ok: true,
-        msg: hospitales
+        hospitales
     })
 }
 

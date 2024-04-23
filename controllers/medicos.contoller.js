@@ -5,14 +5,43 @@ const Hospital = require('../models/hospital.model')
 const getMedicos = async (req = request, res = response) => {
 
     try {
-
-        const medicos = await Medico.find({}, 'nombre')
+        const medicos = await Medico.find({}, 'nombre img id')
             .populate('usuario', 'nombre img')
             .populate('hospital', 'nombre img');
 
         res.status(200).json({
             ok: true,
             medicos
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Hubo un error, contacte con el admin.'
+        })
+    }
+}
+
+const getMedico = async (req = request, res = response) => {
+
+    const medicoId = req.params.id;
+
+    try {
+
+        const medico = await Medico.findById(medicoId, 'nombre img id')
+            .populate('usuario', 'nombre img')
+            .populate('hospital', 'nombre img');
+
+        if(!medico) {
+            res.status(404).json({
+                ok: false,
+                msg: 'El medico con el id enviado no existe.'
+            })
+        }
+
+        res.status(200).json({
+            ok: true,
+            medico
         })
     } catch (error) {
         console.log(error);
@@ -121,6 +150,7 @@ const deleteMedico = async (req = request, res = response) => {
 
 module.exports = {
     getMedicos,
+    getMedico,
     createMedico,
     upadateMedico,
     deleteMedico
